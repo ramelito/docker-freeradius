@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  vars:
+    mysql_host: '{{ ansible_env.MYSQL_PORT_3306_TCP_ADDR }}'
+    mysql_root: '{{ ansible_env.MYSQL_ENV_MYSQL_ROOT_PASSWORD }}'
+    mysql_user: '{{ ansible_env.MYSQL_RADIUS_USER }}'
+    mysql_pass: '{{ ansible_env.MYSQL_RADIUS_USER_PASSWORD }}'
+    radius_secret: '{{ ansible_env.RADIUS_SECRET }}'
+
+  tasks:
+    - name: Create RADIUS user account
+      mysql_user: name={{ mysql_user }} password={{ mysql_pass }} host=% priv=radius.*:ALL,GRANT state=present login_user=root login_password={{ mysql_root }} login_host={{ mysql_host }}
+
+    - name: Create RADIUS database
+      mysql_db: name=radius state=present login_user=root login_password={{ mysql_root }} login_host={{ mysql_host }}
+
+    - name: Create RADIUS tables
+      shell: mysql -u{{ mysql_user }} -p{{ mysql_pass }} -h{{ mysql_host }} radius < /etc/freeradius/sql/mysql/{{ item }}
+      ignore_errors: True
+      with_items:
+        - schema.sql
+        - nas.sql
+
+    - name: Copy configuration files to remote host
+      template: src={{ item }} dest=/etc/freeradius/{{ item }} owner=root group=freerad
+      with_items:
+        - radiusd.conf
+        - clients.conf
+        - sql.conf
+        - sites-available/default
+        - sites-available/inner-tunnel
+
+    - name: Restart RADIUS server
+      service: name=freeradius state=stopped
