@@ -38,9 +38,8 @@
 
 <p>Imagine you have a root access to Linux machine with Internet connection. It does not matter it's virtual or physical. I would prefer to manage box with deadly simple orcherstration tool - Ansible. So you've better to have it on the box.</p>
 
-<ol>
-<li>Installing Ansible.</li>
-</ol>
+<h2>
+<a id="1-installing-ansible" class="anchor" href="#1-installing-ansible" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Installing Ansible.</h2>
 
 <p>Install packages.</p>
 
@@ -61,9 +60,8 @@ git submodule update --init</pre></div>
 
 <div class="highlight highlight-bash"><pre><span class="pl-s3">echo</span> <span class="pl-s1"><span class="pl-pds">'</span>[local]\nlocalhost\n<span class="pl-pds">'</span></span> <span class="pl-k">&gt;</span> /etc/ansible/hosts</pre></div>
 
-<ol>
-<li>Installing Docker.</li>
-</ol>
+<h2>
+<a id="2-installing-docker" class="anchor" href="#2-installing-docker" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Installing Docker.</h2>
 
 <p>Next step is to install fresh Docker ecosystem. If you do not already installed proceed with this recipe.</p>
 
@@ -85,9 +83,8 @@ git submodule update --init</pre></div>
 
 <p>Now you should have fresh and up-to-date Docker.</p>
 
-<ol>
-<li>Dockerize it.</li>
-</ol>
+<h2>
+<a id="3-dockerize-it" class="anchor" href="#3-dockerize-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Dockerize it.</h2>
 
 <p>So here where really magic begins. We create playbook with three simple tasks. These tasks actually will start MySQL, PMA and Freeradius. On the output you will get three running containers connected to each other and ready to serve.</p>
 
