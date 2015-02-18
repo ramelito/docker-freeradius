@@ -42,15 +42,22 @@
 <li>Installing Ansible.</li>
 </ol>
 
-<div class="highlight highlight-bash"><pre>apt-get -y update
-apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar python-paramiko python-setuptools python-pkg-resources git python-pip
+<p>Install packages.</p>
 
-<span class="pl-s1"><span class="pl-pds">`</span><span class="pl-pds">`</span><span class="pl-pds">`</span>bash</span>
-<span class="pl-s1">git clone http://github.com/ansible/ansible.git /opt/ansible/ansible</span>
-<span class="pl-s1"><span class="pl-s3">cd</span> ansible</span>
-<span class="pl-s1">git submodule update --init</span></pre></div>
+<div class="highlight highlight-bash"><pre>apt-get -y update
+apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar python-paramiko python-setuptools python-pkg-resources git python-pip</pre></div>
+
+<p>Clone current ansible from Github.</p>
+
+<div class="highlight highlight-bash"><pre>git clone http://github.com/ansible/ansible.git
+<span class="pl-s3">cd</span> ansible
+git submodule update --init</pre></div>
+
+<p>Source ansible environment.</p>
 
 <div class="highlight highlight-bash"><pre><span class="pl-s3">.</span> ./hacking/env-setup</pre></div>
+
+<p>Create global inventory file with localhost.</p>
 
 <div class="highlight highlight-bash"><pre><span class="pl-s3">echo</span> <span class="pl-s1"><span class="pl-pds">'</span>[local]\nlocalhost\n<span class="pl-pds">'</span></span> <span class="pl-k">&gt;</span> /etc/ansible/hosts</pre></div>
 
@@ -62,7 +69,7 @@ apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar pyth
 
 <div class="highlight highlight-bash"><pre>ansible-galaxy install angstwad.docker_ubuntu</pre></div>
 
-<p>Create simple playbook with your favorite text editor.</p>
+<p>Create simple playbook with your favorite text editor...</p>
 
 <div class="highlight highlight-bash"><pre>cat /tmp/docker.yml</pre></div>
 
@@ -72,7 +79,7 @@ apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar pyth
  <span class="pl-s1"><span class="pl-ent"> roles:</span></span>
     <span class="pl-s1">- <span class="pl-s1">angstwad.docker_ubuntu</span></span></pre></div>
 
-<p>And just execute it.</p>
+<p>... and just execute it.</p>
 
 <div class="highlight highlight-bash"><pre>ansible-playbook /tmp/docker.yml</pre></div>
 
@@ -119,8 +126,14 @@ bdaf6aeaf452        mysql:latest                     
 <h1>
 <a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h1>
 
+<p>This relatively simple and timesaving scenario does not require much from user's experience and can be easily deployed either inside virtualbox image or physical lab machine. Have a nice BRASing.</p>
+
 <h1>
 <a id="references" class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h1>
+
+<p><a href="http://www.ansible.com/2014/02/12/installing-and-building-docker-with-ansible">http://www.ansible.com/2014/02/12/installing-and-building-docker-with-ansible</a>
+<a href="https://docs.docker.com/userguide/dockerlinks/">https://docs.docker.com/userguide/dockerlinks/</a>
+<a href="http://wiki.freeradius.org/guide/FAQ">http://wiki.freeradius.org/guide/FAQ</a></p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/ramelito">ramelito</a></p>
