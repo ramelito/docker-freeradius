@@ -42,16 +42,17 @@
 <li>Installing Ansible.</li>
 </ol>
 
-<p><code>apt-get -y update</code>
-<code>apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar python-paramiko python-setuptools python-pkg-resources git python-pip</code></p>
+<div class="highlight highlight-bash"><pre>apt-get -y update
+apt-get install -y python-yaml python-jinja2 python-httplib2 python-keyczar python-paramiko python-setuptools python-pkg-resources git python-pip
 
-<p><code>git clone http://github.com/ansible/ansible.git /opt/ansible/ansible</code>
-<code>cd ansible</code>
-<code>git submodule update --init</code></p>
+<span class="pl-s1"><span class="pl-pds">`</span><span class="pl-pds">`</span><span class="pl-pds">`</span>bash</span>
+<span class="pl-s1">git clone http://github.com/ansible/ansible.git /opt/ansible/ansible</span>
+<span class="pl-s1"><span class="pl-s3">cd</span> ansible</span>
+<span class="pl-s1">git submodule update --init</span></pre></div>
 
-<p><code>. ./hacking/env-setup</code></p>
+<div class="highlight highlight-bash"><pre><span class="pl-s3">.</span> ./hacking/env-setup</pre></div>
 
-<p><code>echo '[local]\nlocalhost\n' &gt; /etc/ansible/hosts</code></p>
+<div class="highlight highlight-bash"><pre><span class="pl-s3">echo</span> <span class="pl-s1"><span class="pl-pds">'</span>[local]\nlocalhost\n<span class="pl-pds">'</span></span> <span class="pl-k">&gt;</span> /etc/ansible/hosts</pre></div>
 
 <ol>
 <li>Installing Docker.</li>
@@ -59,18 +60,21 @@
 
 <p>Next step is to install fresh Docker ecosystem. If you do not already installed proceed with this recipe.</p>
 
-<p><code>ansible-galaxy install angstwad.docker_ubuntu</code></p>
+<div class="highlight highlight-bash"><pre>ansible-galaxy install angstwad.docker_ubuntu</pre></div>
 
 <p>Create simple playbook with your favorite text editor.</p>
 
-<p><code>cat /tmp/docker.yml</code>
-<code>- hosts:local</code>
-  <code>connection: local</code>
-  <code>roles:</code>
-    <code>- angstwad.docker_ubuntu</code></p>
+<div class="highlight highlight-bash"><pre>cat /tmp/docker.yml</pre></div>
 
-<p>And just execute it.
-<code>ansible-playbook /tmp/docker.yml</code></p>
+<div class="highlight highlight-yml"><pre><span class="pl-s1">-<span class="pl-s1">--</span></span>
+<span class="pl-s1">- <span class="pl-s1">hosts:local</span></span>
+ <span class="pl-s1"><span class="pl-ent"> connection:</span> <span class="pl-s1">local</span></span>
+ <span class="pl-s1"><span class="pl-ent"> roles:</span></span>
+    <span class="pl-s1">- <span class="pl-s1">angstwad.docker_ubuntu</span></span></pre></div>
+
+<p>And just execute it.</p>
+
+<div class="highlight highlight-bash"><pre>ansible-playbook /tmp/docker.yml</pre></div>
 
 <p>Now you should have fresh and up-to-date Docker.</p>
 
@@ -80,33 +84,37 @@
 
 <p>So here where really magic begins. We create playbook with three simple tasks. These tasks actually will start MySQL, PMA and Freeradius. On the output you will get three running containers connected to each other and ready to serve.</p>
 
-<p>Once again take your favorite editor and create following playbook:
-<code>cat fr_mysql_pma.yml</code>
-<code>---</code>
-<code>- hosts: local</code>
-  <code>connection: local</code>
-  <code>vars:</code>
-    <code>- mysql_root_pass: password123  </code></p>
+<p>Once again take your favorite editor and create following playbook:</p>
 
-<p> <code>tasks:</code>
-    <code>- name: Start MySQL</code>
-      <code>docker: image=mysql name=freeradius-mysql volumes="/var/lib/mysql:volumes/mysql" env="MYSQL_ROOT_PASSWORD={{ mysql_root_pass }}"</code></p>
+<div class="highlight highlight-bash"><pre>cat fr_mysql_pma.yml </pre></div>
 
-<p>   <code>- name: Start PMA</code>
-      <code>docker: image=corbinu/docker-phpmyadmin name=pma env="MYSQL_USERNAME=root" links=freeradius-mysql:mysql ports=80:80</code></p>
+<div class="highlight highlight-yml"><pre><span class="pl-s1">-<span class="pl-s1">--</span></span>
+<span class="pl-s1">- <span class="pl-ent">hosts:</span> <span class="pl-s1">local</span></span>
+ <span class="pl-s1"><span class="pl-ent"> connection:</span> <span class="pl-s1">local</span></span>
+ <span class="pl-s1"><span class="pl-ent"> vars:</span></span>
+ <span class="pl-s1"><span class="pl-ent">   - mysql_root_pass:</span> <span class="pl-s1">password123  </span></span>
 
-<p>   <code>- name: Start Freeradius</code>
-      <code>docker: image=ramelito/docker-freeradius name=frv2 links=freeradius-mysql:mysql ports=1812:1812/udp,1813:1813/udp command="freeradius -f"</code></p>
+ <span class="pl-s1"><span class="pl-ent"> tasks:</span></span>
+ <span class="pl-s1"><span class="pl-ent">   - name:</span> <span class="pl-s1">Start MySQL</span></span>
+ <span class="pl-s1"><span class="pl-ent">     docker:</span> <span class="pl-s1">image=mysql name=freeradius-mysql volumes="/var/lib/mysql:volumes/mysql" env="MYSQL_ROOT_PASSWORD={{ mysql_root_pass }}"</span></span>
 
-<p>Run it:
-<code>ansible-playbook fr_mysql_pma.yml</code></p>
+ <span class="pl-s1"><span class="pl-ent">   - name:</span> <span class="pl-s1">Start PMA</span></span>
+ <span class="pl-s1"><span class="pl-ent">     docker:</span> <span class="pl-s1">image=corbinu/docker-phpmyadmin name=pma env="MYSQL_USERNAME=root" links=freeradius-mysql:mysql ports=80:80</span></span>
 
-<p>Check it:
-<code>docker ps -a</code>
-<code>CONTAINER ID        IMAGE                               COMMAND                CREATED             STATUS              PORTS                                            NAMES</code>
-<code>fc250eae3986        ramelito/docker-freeradius:latest   "./entrypoint.sh fre   7 minutes ago       Up 7 minutes        0.0.0.0:1812-&gt;1812/udp, 0.0.0.0:1813-&gt;1813/udp   frv2                </code>
-<code>5526ad668362        corbinu/docker-phpmyadmin:latest    "/bin/sh -c phpmyadm   About an hour ago   Up About an hour    0.0.0.0:80-&gt;80/tcp                               pma                 </code>
-<code>bdaf6aeaf452        mysql:latest                        "/entrypoint.sh mysq   About an hour ago   Up About an hour    3306/tcp                                         freeradius-mysql  </code></p>
+ <span class="pl-s1"><span class="pl-ent">   - name:</span> <span class="pl-s1">Start Freeradius</span></span>
+ <span class="pl-s1"><span class="pl-ent">     docker:</span> <span class="pl-s1">image=ramelito/docker-freeradius name=frv2 links=freeradius-mysql:mysql ports=1812:1812/udp,1813:1813/udp command="freeradius -f"</span></span></pre></div>
+
+<p>Run it:</p>
+
+<div class="highlight highlight-bash"><pre>ansible-playbook fr_mysql_pma.yml</pre></div>
+
+<p>Check it:</p>
+
+<div class="highlight highlight-bash"><pre>docker ps -a
+CONTAINER ID        IMAGE                               COMMAND                CREATED             STATUS              PORTS                                            NAMES
+fc250eae3986        ramelito/docker-freeradius:latest   <span class="pl-s1"><span class="pl-pds">"</span>./entrypoint.sh fre   7 minutes ago       Up 7 minutes        0.0.0.0:1812-&gt;1812/udp, 0.0.0.0:1813-&gt;1813/udp   frv2                </span>
+<span class="pl-s1">5526ad668362        corbinu/docker-phpmyadmin:latest    <span class="pl-pds">"</span></span>/bin/sh -c phpmyadm   About an hour ago   Up About an hour    0.0.0.0:80-<span class="pl-k">&gt;</span>80/tcp                               pma                 
+bdaf6aeaf452        mysql:latest                        <span class="pl-s1"><span class="pl-pds">"</span>/entrypoint.sh mysq   About an hour ago   Up About an hour    3306/tcp                                         freeradius-mysql  </span></pre></div>
 
 <h1>
 <a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h1>
